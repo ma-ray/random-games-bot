@@ -1,5 +1,12 @@
 const Discord = require('discord.js');
 const words = require('./words.json');
+const imageArray = ['https://i.imgur.com/4fUw8pk.png',
+					'https://i.imgur.com/JSItDs4.png',
+					'https://i.imgur.com/yIH3jOU.png',
+					'https://i.imgur.com/TdBJrbe.png',
+					'https://i.imgur.com/xnow7rE.png',
+					'https://i.imgur.com/bJVNGVQ.png',
+					'https://i.imgur.com/35Yr3GE.png'];
 
 module.exports = {
 	name: 'hangman',
@@ -17,13 +24,16 @@ module.exports = {
 			.setColor('#2ECC71')
 			.setTitle('Hangman')
 			.addField('Attempts: ' + attempts, outputWord(displayWord), true)
-			.setTimestamp();
+			.setTimestamp()
+			.setImage(imageArray[attempts]);
 
 		console.log('Initialized Hangman');
 		message.channel.send(embed);
 
 		collector.on('collect', m => {
 			console.log(`User recorded ${m.content}`);
+
+			// Delete the user's input message
 			m.delete();
 			// Single char mode
 			if (m.content.length === 1) {
@@ -40,8 +50,9 @@ module.exports = {
 						embed = new Discord.MessageEmbed()
 							.setColor('#FF0000')
 							.setTitle('Hangman')
-							.addField('You lose', secretWord.join(''), true)
-							.setTimestamp();
+							.addField('You lose!', secretWord, true)
+							.setTimestamp()
+							.setImage(imageArray[attempts]);
 
 						message.channel.send(embed);
 						collector.stop();
@@ -53,7 +64,8 @@ module.exports = {
 					.setColor('#0099ff')
 					.setTitle('Hangman')
 					.addField('Attempts: ' + attempts, outputWord(displayWord), true)
-					.setTimestamp();
+					.setTimestamp()
+					.setImage(imageArray[attempts]);
 				message.channel.send(embed);
 
 				if (!displayWord.includes('█')) {
