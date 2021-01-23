@@ -4,22 +4,21 @@ class CardDeck {
     constructor() {
         // generate a deck of cards
         // array of cards
-        let deck;
+        let deck = [];
         let card;
         const suits = ['Clubs', 'Diamonds', 'Hearts', 'Spades'];
-        const numbers = ['A', '2', '3', '4', '5', '6',  '7', '8', '9', '10', 'J', 'Q','K'];
+        const numbers = ['Ace', '2', '3', '4', '5', '6',  '7', '8', '9', '10', 'Jack', 'Queen','King'];
 
         for (let s = 0; s < suits.length; s++) {
             for(let n = 0; n < numbers.length; n++) {
+                let color = 'Black';
                 if (['Diamonds', 'Hearts'].includes(suits[s])) {
-                    card = {num:    numbers[n],
-                            suite:  suits[s],
-                            color:  'Red'};
-                } else {
-                    card = {num:    numbers[n],
-                            suite:  suits[s],
-                            color:  'Black'};
+                    color = 'Red';
                 }
+
+                card = {num:    numbers[n],
+                        suite:  suits[s],
+                        color:  color};
                 deck.push(card);
             }
         }
@@ -39,8 +38,12 @@ class CardDeck {
     }
 
     // Draw a card from the top of the deck
+    // TODO: maybe do nullish coalscing when the deck is empty
     draw() {
-        return this.deck.shift();
+        if (!this.isEmpty()) {
+            return this.deck.shift();
+        }
+        return null;
     }
 
     // Place a card on top of the deck
@@ -65,4 +68,10 @@ class CardDeck {
     isEmpty() {
         return  this.deck.length ===  0;
     }
+
+    numCards() {
+        return this.deck.length;
+    }
 }
+
+module.exports = CardDeck;
