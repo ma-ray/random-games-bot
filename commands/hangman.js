@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const words = require('./words.json');
+const https = require('https');
 
 const RED = '#FF0000';
 const BLUE = '#0093FF';
@@ -17,7 +18,8 @@ module.exports = {
 	name: 'hangman',
 	description: 'Play Hangman',
 	async execute(message) {
-		const secretWord = words.list[Math.floor(Math.random() * words.list.length)];
+		// const secretWord = words.list[Math.floor(Math.random() * words.list.length)];
+		let secretWord = await getRandomWord();
 		let displayWord = Array(secretWord.length).fill('█');
 
 		const filter = m => m.author.id === message.author.id;
@@ -113,4 +115,30 @@ function outputWord(word) {
 	}
 
 	return output;
+}
+
+function getRandomWord() {
+	let data = null;
+	// Creates a promise. When action inside the promise is done, we can use resolve to return it back out of the async process.
+	return new Promise((resolve) => {
+		// Make the https call
+		https.get('https://random-word-api.herokuapp.com/word?number=1', (resp) => {
+			// A chunk of data has been received.
+			resp.on('data', (chunk) => {
+				data = JSON.parse(chunk)[0];
+				console.log(data);
+			});
+	
+			// // The whole response has been received. Print out the result.
+			resp.on('end', () => {
+				resolve(data); 
+			});
+
+			// Some error, resolve to a 'random' word.
+			resp.on('error', (error) => {
+				console.error(error);
+				resolve('rainbow');
+			});
+		});
+	});
 }
