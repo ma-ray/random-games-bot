@@ -38,15 +38,7 @@ module.exports = {
                 msg.edit('Stay');
             }
 
-            // clear the user's reactions
-            const userReactions = msg.reactions.cache.filter(reaction => reaction.users.cache.has(message.author.id));
-            try {
-                for (const reaction of userReactions.values()) {
-                    reaction.users.remove(message.author.id);
-                }
-            } catch (error) {
-                console.error('Failed to remove reactions');
-            }
+            removeReactions(msg, message);
         });
         
         collector.on('end', collected => {
@@ -56,7 +48,13 @@ module.exports = {
     }
 }
 
-function removeReactions(msg, original, reaction) {
-    
-
+function removeReactions(msg, original) {
+    const userReactions = msg.reactions.cache.filter(reaction => reaction.users.cache.has(original.author.id));
+    try {
+        for (const reaction of userReactions.values()) {
+            reaction.users.remove(original.author.id);
+        }
+    } catch (error) {
+        console.error('Failed to remove reactions');
+    }
 }
