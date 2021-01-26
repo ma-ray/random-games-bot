@@ -1,13 +1,10 @@
 const CardDeck = require('./CardDeck.js');
 const Discord = require('discord.js');
 
-// aces is worth 1 or 11
-// face is worth 10
-
-// dealer gets one face up and one face down
-// player gets 2 cards face up
-
-// dealer must hit until the total is 17
+const GREEN = '#2ECC71';
+const RED = '#FF0000';
+const YELLOW = '#ffff00';
+const BLACK = '#000000';
 
 module.exports = {
     name: 'blackjack',
@@ -33,16 +30,13 @@ module.exports = {
         console.log(playerHand[1]);
 
         // Variables for the embed
-		// let color = GREEN;
-		let attempts = 6;
 		let title = 'Blackjack';
-        let field = 'Attempts: ' + attempts;
         let playerContent = 'The total is ' + sumHand(playerHand);
-        let dealerContent = `${dealerHand[0].num} of ${dealerHand[1].suite}\n *One Face Down*`;
+        let color = BLACK;
 
 		let embed = new Discord.MessageEmbed()
 			.setTitle(title)
-            .addField("Dealer's Hand:", dealerContent, false)
+            .addField("Dealer's Hand:", `${dealerHand[0].num} of ${dealerHand[1].suite}\n *One Face Down*`, false)
             .addField(`${message.author.tag}'s Hand:`, displayHand(playerHand), false)
             .setDescription(playerContent)
 			.setTimestamp()
@@ -54,6 +48,7 @@ module.exports = {
             msg.react(reactionList[i]);
         }
 
+        // only the user who initiated the gane can react to play
         const filter = (reaction, user) => {
             return reactionList.includes(reaction.emoji.name) && user.id === message.author.id;
         };
@@ -68,12 +63,14 @@ module.exports = {
                 playerHand.push(deck.draw());
                 playerContent = 'The total is ' + sumHand(playerHand);
 
-                // Player win conditions
+                // Player win/lose conditions
                 if (sumHand(playerHand) > 21) {
                     playerContent = 'You Lose'
+                    color = RED;
                     collector.stop();
                 } else if (sumHand(playerHand) === 21) {
                     playerContent = 'You Win!';
+                    color = GREEN;
                     collector.stop();
                 }
             } else if (reaction.emoji.name === '⏹') {
@@ -81,29 +78,33 @@ module.exports = {
                 // Dealer's turn and end condition
                 while (sumHand(dealerHand) < 17) {
                     dealerHand.push(deck.draw());
-                    dealerContent = displayHand(dealerHand);
                 }
 
                 console.log('Dealers hand is ' +  sumHand(dealerHand));
+                console.log(dealerHand);
 
-                // Dealer conditions
+                // Dealer win/lose conditions
                 if (sumHand(dealerHand) > 21 || sumHand(playerHand) > sumHand(dealerHand)) {
                     playerContent = 'You Win'
+                    color = GREEN;
                     collector.stop();
                 } else if (sumHand(dealerHand) === 21 || sumHand(playerHand) < sumHand(dealerHand)) {
                     playerContent = 'You Lose';
+                    color = RED;
                     collector.stop();
                 } else {
                     playerContent = 'A DRAW!';
+                    color =  YELLOW;
                     collector.stop();
                 }
             }
 
             embed = new Discord.MessageEmbed()
                 .setTitle(title)
-                .addField("Dealer's Hand:", dealerContent, false)
+                .addField("Dealer's Hand:", displayHand(dealerHand), false)
                 .addField(`${message.author.tag}'s Hand:`, displayHand(playerHand), false)
                 .setDescription(playerContent)
+                .setColor(color)
                 .setTimestamp()
 
             msg.edit(embed);
@@ -118,6 +119,7 @@ module.exports = {
     }
 }
 
+// Removes the user's reactions from the embed
 function removeReactions(msg, original) {
     const userReactions = msg.reactions.cache.filter(reaction => reaction.users.cache.has(original.author.id));
     try {
@@ -129,6 +131,7 @@ function removeReactions(msg, original) {
     }
 }
 
+// Displays the contents of a hand for the embed
 function displayHand(hand) {
     let output = '';
 
@@ -138,19 +141,28 @@ function displayHand(hand) {
     return output;
 }
 
+// Returns the value of a hand
 function sumHand(hand) {
     let total = 0;
-    // TODO: for now assume ace is 11
-    // let aceCounter = 0;
+    let aceCounter = 0;
+
     for (let i = 0; i < hand.length; i++) {
         if (['Jack', 'Queen', 'King'].includes(hand[i].num)) {
             total  += 10;
         } else if (hand[i].num === 'Ace') {
-            total += 11;
+            aceCounter++;
         } else {
             total += parseInt(hand[i].num);
         }
     }
 
-    return total;
+    if (total > 10) {
+        return total + aceCounter;
+    } else {
+        if ((total + 11 + (aceCounter-1))  <= 21) {
+            return (total + 11 + (aceCounter-1));
+        } else {
+            return total + aceCounter;
+        }
+    }
 }
