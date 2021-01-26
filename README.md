@@ -7,5 +7,14 @@ A discord bot with some common games to kill time.
 * **Blackjack:** Face off against the dealer! Should you hit or stay? 🤔 Beat the dealer or go bust.
 
 ## Running the bot for your own use
-If you want to run this bot yourself, put you token in config.json then execute the following command:
-```node index.js```
+Create a `config.json` with the following contents (you can change the prefix if you want):
+```json
+{
+	"prefix": ">",
+	"token": "YOUR TOKEN HERE"
+}
+```
+Now run the following command:
+```
+node ./index.js
+```
