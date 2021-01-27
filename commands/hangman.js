@@ -16,10 +16,20 @@ const imageArray = ['https://i.imgur.com/4fUw8pk.png',
 
 module.exports = {
 	name: 'hangman',
+	args: true,
 	description: 'Play Hangman',
-	async execute(message) {
-		// const secretWord = words.list[Math.floor(Math.random() * words.list.length)];
-		let secretWord = await getRandomWord();
+	async execute(message,  args) {
+		let secretWord;
+
+		if (args[0] === 'random') {
+			secretWord = await getRandomWord();
+		} else if (args[0] === 'regular') {
+			secretWord = words.list[Math.floor(Math.random() * words.list.length)];
+		} else {
+			message.channel.send('Invalid arguments.')
+			return;
+		}
+
 		let displayWord = Array(secretWord.length).fill('█');
 
 		const filter = m => m.author.id === message.author.id;
@@ -36,7 +46,8 @@ module.exports = {
 			.setTitle(title)
 			.addField(field, outputWord(displayWord), true)
 			.setTimestamp()
-			.setImage(imageArray[attempts]);
+			.setImage(imageArray[attempts])
+			.setFooter('You can guess a letter or the full word.');
 
 		console.log('Initialized Hangman');
 		let msg = await message.channel.send(embed);
@@ -95,7 +106,8 @@ module.exports = {
 				.setTitle(title)
 				.addField(field, outputWord(displayWord), true)
 				.setTimestamp()
-				.setImage(imageArray[attempts]);
+				.setImage(imageArray[attempts])
+				.setFooter('You can guess a letter or the full word.');
 
 			msg.edit(embed);
 		});

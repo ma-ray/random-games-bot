@@ -39,7 +39,8 @@ module.exports = {
             .addField("Dealer's Hand:", `${dealerHand[0].num} of ${dealerHand[1].suite}\n *One Face Down*`, false)
             .addField(`${message.author.tag}'s Hand:`, displayHand(playerHand), false)
             .setDescription(playerContent)
-			.setTimestamp()
+            .setFooter('⬆ to hit and ⏹ to stay.')
+			.setTimestamp();
 
         let msg = await message.channel.send(embed);
 
@@ -106,6 +107,7 @@ module.exports = {
                 .setDescription(playerContent)
                 .setColor(color)
                 .setTimestamp()
+                .setFooter('⬆ to hit and ⏹ to stay.');
 
             msg.edit(embed);
 
