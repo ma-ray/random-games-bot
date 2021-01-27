@@ -27,7 +27,7 @@ class CardDeck {
 
     // Shuffle the deck of cards
     shuffleDeck() {
-        for (let i = 0; i < 1000; i++) {
+        for (let i = 0; i < 5000; i++) {
             let card1 = Math.floor(Math.random() * this.deck.length);
             let card2 = Math.floor(Math.random() * this.deck.length);
             let temp = this.deck[card1];

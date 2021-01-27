@@ -70,7 +70,7 @@ module.exports = {
                     color = RED;
                     collector.stop();
                 } else if (sumHand(playerHand) === 21) {
-                    playerContent = 'You Win!';
+                    playerContent = 'You Win!!!';
                     color = GREEN;
                     collector.stop();
                 }
@@ -86,7 +86,7 @@ module.exports = {
 
                 // Dealer win/lose conditions
                 if (sumHand(dealerHand) > 21 || sumHand(playerHand) > sumHand(dealerHand)) {
-                    playerContent = 'You Win'
+                    playerContent = 'You Win!!!'
                     color = GREEN;
                     collector.stop();
                 } else if (sumHand(dealerHand) === 21 || sumHand(playerHand) < sumHand(dealerHand)) {
@@ -94,7 +94,7 @@ module.exports = {
                     color = RED;
                     collector.stop();
                 } else {
-                    playerContent = 'A DRAW!';
+                    playerContent = 'A DRAW!!!';
                     color =  YELLOW;
                     collector.stop();
                 }
